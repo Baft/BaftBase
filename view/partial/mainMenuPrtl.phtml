@@ -1,0 +1,42 @@
+<?php
+function printPage($page){
+	$active =( $page->isActive(true)) ? "open  active" : "";
+	$landingPage=($page->get('landing_page') )  ? "start" : "";
+	$hasChild=$page->hasPages(true);
+	$childs=$page->getPages();
+
+	//page html container open tag
+	print "<li class='{$landingPage} {$active}'>";
+
+	//page html
+	print"<a href='#{$page->getHref()}' class='{$page->getClass()}' id='{$page->getId()}'>
+			<i class='{$page->get('icon')}'></i>
+			<span class='title'>{$page->getLabel()}</span>".
+			(($hasChild) ? "<span class='arrow'></span>" : "")
+		."</a>";
+
+
+	//page children html
+	if($hasChild){
+		print "<ul class='sub-menu {$active}'>";
+		foreach ($childs as $child) {
+			print printPage($child);
+		}
+		print "</ul>";
+	}
+
+	//page html container close tag
+	print "</li>";
+
+}
+
+?>
+<ul class="page-sidebar-menu page-sidebar-menu-light" href=""
+			data-keep-expanded="false" data-auto-scroll="true"
+			data-slide-speed="200"
+			data-ng-class="{'page-sidebar-menu-closed': settings.layout.pageSidebarClosed}">
+			<?php
+				foreach ($this->container as $page)
+					print printPage($page);
+			?>
+</ul>

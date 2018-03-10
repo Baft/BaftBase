@@ -1,0 +1,84 @@
+<script type="text/javascript">
+<!--
+<?php
+	$JSTableContainer="table_".preg_replace(array("/-/","/ /"),"_", $this->GName);
+    print "var ".$JSTableContainer.";";
+    ?>
+/*
+$(document).ready(function(){
+
+	//###################### grid defenition #####################
+	<?php print $JSTableContainer;  ?>=$("#<?php print $this->GName; ?>").dataTable({
+
+	//###################### grid Configurations #####################
+	    <?php
+            $configure = "";
+            if (isset($this->GSetting) && ! empty($this->GSetting) &&
+                     is_array($this->GSetting))
+                foreach ($this->GSetting as $configKey => $configValue) {
+
+                    $configValue = trim($configValue);
+
+                    // find settings that defined as javaScript like : "<<anyScript>>"
+                    preg_match_all("/<<([\w\S\W\x0A]*)>>/", $configValue, $script);
+                    if (isset($script[1][0]) && ! empty($script[1][0]))
+                        $configValue = trim($script[1][0]);
+                    else
+                        $configValue = "\"{$configValue}\"";
+
+                    $configure .= "\"{$configKey}\": $configValue ,";
+                }
+            print rtrim($configure, ",");
+        ?>
+	});
+	//#################### grid actions ########################
+    <?php
+    if (isset($this->GBehavior))
+        print $this->GBehavior;
+    ?>
+
+});
+*/
+//-->
+</script>
+<table cellpadding="0" cellspacing="0" border="0"
+	id="<?php print $this->GName; ?>" width="100%" class="table">
+	<thead>
+		<tr>
+        <?php
+        if (isset($this->GFields) && ! empty($this->GFields) &&
+                 is_array($this->GFields))
+            foreach ($this->GFields as $index => $fieldName) {
+                print "<th class='center {$index}'  id='{$index}'>{$fieldName}</th>";
+            }
+        ?>
+        </tr>
+	</thead>
+	<?php
+    $foots = "";
+    if (isset($this->GFoots) && ! empty($this->GFoots) && is_array($this->GFoots))
+        foreach ($this->GFoots as $index => $value) {
+            $foots .= "<th class='center ui-state-default {$index}'>{$value}</th>";
+        }
+
+    if (! empty($foots))
+        print "<tfoot><tr>{$foots}</tr></tfoot>";
+    ?>
+	<tbody>
+
+        <?php
+        if (isset($this->GData) && ! empty($this->GData) &&
+                 is_array($this->GData))
+            foreach ($this->GData as $row) {
+
+                $column = "";
+                if (! empty($row) && is_array($row))
+                    foreach ($row as $index => $columnData) {
+                        $column .= "<td class='center ui-state-default {$index}' style='text-align: center'>$columnData</td>";
+                    }
+                print "<tr>{$column}</tr>";
+            }
+        ?>
+
+    </tbody>
+</table>

@@ -1,0 +1,1 @@
+contain Core Modules that is accessed by modules that not coreModule , these CoreModule in this directory make a coreand these modules awarde "Core" meaning to the Core Folder

@@ -1,0 +1,83 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="area-top clearfix">
+            <div class="pull-left header">
+                <h3 class="title">
+                    <?php
+                    if (!empty($this->pages)) {
+                        $currentPage = $this->pages[count($this->pages) - 1];
+                        if (isset($currentPage->icon)) {
+                            print '<i class="' . $currentPage->icon . '"></i>';
+                        }
+                        print $currentPage->getLabel();
+                    } else {
+                        print '<i class="icon-dashboard"></i>';
+                        print "Dashboard";
+                    }
+                    ?>
+                </h3>
+                <h5>
+                    <span class="hidden-tablet hidden-phone">
+                        Click <a href="#" id="switch-sidebar">here</a> to minimize sidebar
+                    </span>
+                    <span class="hidden-desktop">
+                        A subtitle can go here
+                    </span>
+                </h5>
+            </div>
+            <ul class="inline pull-right sparkline-box">
+              <li class="sparkline-row">
+                <h4 class="green"><span>CPU Load</span> <div id="sparkline-cpu-load-text">-</div></h4>
+                <div id="sparkline-cpu-load-chart" class="sparkline big" data-color="green"></div>
+              </li>
+
+              <li class="sparkline-row">
+                <h4 class="blue"><span>Memory MB</span> <div id="sparkline-memory-usage-text">-</div></h4>
+                <div id="sparkline-memory-usage-chart" class="sparkline big" data-color="blue"></div>
+              </li>
+
+              <li class="sparkline-row">
+                <h4 class="red"><span>Attacks #</span> <div id="sparkline-attack-text">-</div></h4>
+                <div id="sparkline-attack-chart" class="sparkline big" data-color="red"></div>
+              </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container-fluid padded">
+    <div class="row-fluid">
+        <div id="breadcrumbs">
+            <div class="breadcrumb-button blue">
+                <span class="breadcrumb-label">
+                    <div class="icon-home"></div>
+                    <a href="<?php print $this->url("main"); ?>" >Home</a>
+                </span>
+                <span class="breadcrumb-arrow">
+                    <span></span>
+                </span>
+            </div>
+            <?php
+            if (!empty($this->pages)) {
+                foreach ($this->pages as $page) {
+                    ?>
+                    <div class="breadcrumb-button">
+                        <span class="breadcrumb-label">
+                            <?php
+                            if (isset($page->icon)) {
+                                print '<i class="' . str_replace("icon-2x", "", $page->icon) . '"></i>';
+                            }
+                            ?> 
+                            <a class="" href="<?php print $page->getHref(); ?>"><?php print $page->getLabel(); ?></a>
+                        </span>
+                        <span class="breadcrumb-arrow">
+                            <span></span>
+                        </span>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+    </div>
+</div>

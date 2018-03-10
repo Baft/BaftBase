@@ -1,0 +1,116 @@
+<?php
+//################## initialization
+$element=$this->element;
+
+$elementErrors='';
+if ($this->renderErrors)
+	$elementErrors = $this->formelementerrors($element);
+
+$markup='';
+
+$label=null;
+if(isset($this->label))
+	$label=$this->label;
+
+$type = $element->getAttribute('type');
+
+//############## render input element by icon setting
+if($type == 'text' || $type == 'password'){
+	$elementOptions = $element->getOptions();
+	$iconAttributes=[];
+	if(isset($elementOptions['icon_attributes']))
+		$iconAttributes=$elementOptions['icon_attributes'];
+
+	if(!empty($iconAttributes)){
+		$icon=(isset($iconAttributes['icon']))?$iconAttributes['icon']:'';
+		$iconPlacement=(isset($iconAttributes['placement']))?$iconAttributes['placement']:'left';
+		$elementString = sprintf(
+				'<div class="input-icon %2$s">
+					<i class="%1$s"></i>
+					%3$s
+				</div>',
+				$icon,
+				$iconPlacement,
+				$this->formelement($element));
+	}
+}else
+	$elementString=$this->formelement($element);
+
+
+//######################### render label by element type
+
+
+// hidden elements do not need a <label> -https://github.com/zendframework/zf2/issues/5607
+if (isset($label) && '' !== $label && $type !== 'hidden' && $type !== 'button') {
+	$labelAttributes = array();
+
+	if ($element instanceof \Zend\Form\LabelAwareInterface) {
+		$labelAttributes = $element->getLabelAttributes();
+	}
+
+	if (! $element instanceof \Zend\Form\LabelAwareInterface || ! $element->getLabelOption('disable_html_escape')) {
+		$label = $this->escapehtml($label);
+	}
+
+	if (empty($labelAttributes)) {
+		$labelAttributes = $this->labelAttributes;
+	}
+
+	// Multicheckbox elements have to be handled differently as the HTML standard does not allow nested
+	// labels. The semantic way is to group them inside a fieldset
+	if ($type === 'multi_checkbox'
+			|| $type === 'radio'
+			|| $element instanceof \Zend\Form\Element\MonthSelect
+			|| $element instanceof \Zend\Form\Element\Captcha
+	) {
+		$markup = sprintf(
+				'<div class="form-group"><label>%1$s</label><div class="checkbox-list">%2$s</div></div>',
+				$label,
+				$elementString
+		);
+	} else {
+		// Ensure element and label will be separated if element has an `id`-attribute.
+		// If element has label option `always_wrap` it will be nested in any case.
+		if ($element->hasAttribute('id')
+				&& ($element instanceof \Zend\Form\LabelAwareInterface && !$element->getLabelOption('always_wrap'))
+		) {
+			$labelOpen = '';
+			$labelClose = '';
+			$label = $this->formlabel($element);
+		} else {
+			$labelOpen  = $this->formlabel()->openTag($labelAttributes);
+			$labelClose = $this->formlabel()->closeTag();
+		}
+
+		if ($label !== '' && (!$element->hasAttribute('id'))
+				|| ($element instanceof \Zend\Form\LabelAwareInterface && $element->getLabelOption('always_wrap'))
+		) {
+			$label = '<span>' . $label . '</span>';
+		}
+
+		if ($element instanceof \Zend\Form\LabelAwareInterface && $element->getLabelOption('label_position')) {
+			$labelPosition = $element->getLabelOption('label_position');
+		}
+
+		switch ($labelPosition) {
+			case 'prepend':
+				 $markup = $labelOpen . $label . $labelClose . $elementString ;
+				break;
+			case 'append':
+			default:
+				$markup = $elementString . $labelOpen . $label . $labelClose;
+				break;
+		}
+	}
+
+	$markup .= $elementErrors;
+
+} else {
+	$markup = $elementString . $elementErrors;
+}
+?>
+
+
+<div class="form-group <?php print (empty($elementErrors))?'':'has-error';?>">
+	<?php print $markup; ?>
+</div>

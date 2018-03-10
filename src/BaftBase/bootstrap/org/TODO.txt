@@ -1,0 +1,6 @@
+--autoload listener :
+	listen on 'pre load org' , before load org
+	add org path to autoload , place path at first place in autoload list (for fast loading)
+	add parents org paths to autoload , place at other palces in order of parents
+
+
